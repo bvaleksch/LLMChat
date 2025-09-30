@@ -2,10 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import get_db
-from app.models.user import User
-from app.schemas.auth import RegisterIn
-from app.core.security import hash_password
+from ...db.session import get_db
+from ...models.user import User
+from ...schemas.auth import RegisterIn
+from ...core.security import hash_password
+from app.schemas.auth import MeOut
+from app.api.deps import get_current_user
 
 router = APIRouter(tags=["users"])
 
@@ -19,3 +21,20 @@ async def register(payload: RegisterIn, db: AsyncSession = Depends(get_db)):
     db.add(user)
     await db.commit()
     return {"message": "User created"}
+
+@router.get("/me", response_model=MeOut)
+async def read_me(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> MeOut:
+    """
+    Return info about the currently authenticated user.
+    Uses the access token for authentication.
+    """
+    return MeOut(
+        id=current_user.id,
+        username=current_user.username,
+        is_active=current_user.is_active,
+        created_at=current_user.created_at,
+    )
+

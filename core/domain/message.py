@@ -1,7 +1,7 @@
 import random
 from typing import List, Optional, Dict, Any
-from .mytypes import Role
-from .images import Image, GenImage
+from mytypes import Role
+from images import Image, GenImage
 
 class Message:
     def __init__(self, role: Role, text: str, images: Optional[List[Image]] = None):

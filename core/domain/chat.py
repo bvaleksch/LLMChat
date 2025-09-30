@@ -1,8 +1,8 @@
 import uuid
 from typing import Optional, Union
-from .mytypes import Role
-from .message import Message
-from ..adapters.openai_runner import build_agent, run_turn
+from core.domain.mytypes import Role
+from core.domain.message import Message
+from core.adapters.openai_runner import build_agent, run_turn
 
 class Chat:
     def __init__(self, name: str):

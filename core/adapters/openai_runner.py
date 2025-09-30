@@ -1,6 +1,6 @@
 from typing import Optional, Any
 from agents import Agent, Runner, ModelSettings
-from .image_tool import image_generation_tool
+from core.adapters.image_tool import image_generation_tool
 
 def build_agent() -> Agent:
     return Agent(
