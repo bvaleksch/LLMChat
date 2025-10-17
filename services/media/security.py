@@ -11,8 +11,8 @@ from .media_enums import PrincipalMode
 # === Configuration ===
 JWT_SECRET = os.getenv("JWT_DEV_SECRET", "dev-secret")
 JWT_ALG = os.getenv("JWT_ALG", "HS256")
-USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://users:8000")
-NONCE_SERVICE_BASE = os.getenv("NONCE_SERVICE_BASE", "http://185.106.95.104:8000")
+USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://95.81.117.253:8000")
+NONCE_SERVICE_BASE = os.getenv("NONCE_SERVICE_BASE", "http://95.81.117.253:8000")
 
 
 class Principal(BaseModel):

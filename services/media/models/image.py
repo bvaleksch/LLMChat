@@ -5,7 +5,7 @@ from sqlalchemy import String, Integer, Boolean, DateTime, Enum as SQLEnum, Chec
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from ..db.base import Base
-from ...schemas.media import ImageKind
+from schemas.media import ImageKind
 
 
 class Image(Base):

@@ -16,9 +16,9 @@ from sqlalchemy import select
 
 from .db.session import get_db
 from .models.image import Image as ImageModel
-from ..schemas.media import ImageKind  
+from schemas.media import ImageKind  
 from .media_enums import PrincipalMode
-from ..schemas.media import MediaOut
+from schemas.media import MediaOut
 from .security import (
     get_principal, require_user, require_service,
     Principal

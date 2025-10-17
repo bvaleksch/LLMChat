@@ -1,11 +1,8 @@
 fastapi
-openai
-openai-agents
 uvicorn[standard]
 sqlalchemy[asyncio]
-strenum
 asyncpg
-bcrypt
+passlib[bcrypt]
 python-jose[cryptography]   
 PyJWT                        
 pydantic

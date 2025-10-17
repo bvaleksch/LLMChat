@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .db.session import get_db
 from .models.user import User
 from .models.refresh_token import RefreshToken
-from ..schemas.auth import TokenPairOut, RefreshIn, VerifyAccessIn
+from schemas.auth import TokenPairOut, RefreshIn, VerifyAccessIn
 from .security import (
     verify_password, create_access_token,
     create_refresh_token_raw, hash_refresh_token,
@@ -20,7 +20,7 @@ from .deps import get_current_user
 
 
 REFRESH_EXPIRES_DAYS = int(os.getenv("REFRESH_EXPIRES_DAYS", "14"))
-USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://185.106.95.104:8000/v1")
+USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://95.81.117.253:8000/v1")
 
 router = APIRouter(tags=["auth"])
 

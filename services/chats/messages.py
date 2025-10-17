@@ -16,7 +16,7 @@ from sqlalchemy.orm import selectinload
 
 from .utils import get_current_user
 from .db.session import get_db
-from ..schemas.users import UserOut
+from schemas.users import UserOut
 from .schemas.chat_member import ChatMemberOut
 from .models.chat_member import ChatMember
 from .models.message_image import MessageImage

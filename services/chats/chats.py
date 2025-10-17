@@ -8,7 +8,7 @@ from uuid import UUID
 from .db.session import get_db
 from .models.chat import Chat
 from .models.chat_member import ChatMember
-from ..schemas.users import UserOut
+from schemas.users import UserOut
 from .utils import get_current_user
 from .schemas.chat import ChatCreate, ChatOut, ChatDetails
 from .schemas.chat_member import ChatMemberCreate as ChatMemberAdd

@@ -1,9 +1,15 @@
 import uuid
+import os
 import httpx
 import mimetypes
 from typing import Optional, Dict
+from dotenv import load_dotenv
 
-BASE_URL = "http://185.106.95.104:8000/v1"
+# Load environment variables from .env file (if present)
+load_dotenv()
+
+# Take base URL from environment or fallback to default
+BASE_URL = os.getenv("MEDIA_SERVICE_BASE", "http://127.0.0.1:8000/v1")
 
 def mime_to_ext(mime_type: str) -> str:
     """Convert MIME type (image/png) → extension (png)."""
@@ -69,3 +75,4 @@ class MediaImage:
 
     def __str__(self) -> str:
         return f"{self.type}(media_id={self.media_id})"
+

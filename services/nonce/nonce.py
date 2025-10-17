@@ -5,7 +5,7 @@ import asyncio
 from typing import Dict, Tuple
 
 from fastapi import APIRouter, HTTPException, status
-from ..schemas.nonce import Nonce
+from schemas.nonce import Nonce
 
 router = APIRouter(tags=["nonce"])
 

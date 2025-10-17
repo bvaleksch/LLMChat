@@ -1,7 +1,7 @@
 import os
 import httpx
 from fastapi import HTTPException, Request, status
-from ..schemas.users import UserOut
+from schemas.users import UserOut
 
 USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://users:8000")
 USERS_ME_URL = f"{USERS_SERVICE_BASE}/users/me"

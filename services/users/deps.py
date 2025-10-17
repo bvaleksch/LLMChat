@@ -12,7 +12,7 @@ from .db.session import get_db
 from .models.user import User
 
 auth_scheme = OAuth2PasswordBearer(tokenUrl="/token")
-USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://185.106.95.104:8000")
+USERS_SERVICE_BASE = os.getenv("USERS_SERVICE_BASE", "http://95.81.117.253:8000")
 
 async def _users_verify_access(user_id: uuid.UUID, access_key: str) -> None:
     url = f"{USERS_SERVICE_BASE}/users/verify-access"

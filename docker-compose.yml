@@ -1,0 +1,95 @@
+# docker-compose.yml
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: llm_chat_user
+      POSTGRES_PASSWORD: DAVBPMhTIHfEL76q6rpRNk2a4Mzo2Vg1t0oNTeX0xKY
+      POSTGRES_DB: llm_chat_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nonce:
+    build:
+      context: .
+      dockerfile: ./services/nonce/Dockerfile
+    container_name: nonce_service
+    env_file:
+      - ./services/nonce/.env
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "8001:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/nonce:/app/nonce
+      - ./services/schemas:/app/schemas:ro
+    restart: unless-stopped
+
+  media:
+    build:
+      context: .
+      dockerfile: ./services/media/Dockerfile
+    container_name: media_service
+    env_file:
+      - ./services/media/.env
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "8003:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/media:/app/media
+      - ./services/schemas:/app/schemas:ro
+    restart: unless-stopped
+
+  users:
+    build:
+      context: .
+      dockerfile: ./services/users/Dockerfile
+    container_name: users_service
+    env_file:
+      - ./services/users/.env
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "8002:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/users:/app/users
+      - ./services/schemas:/app/schemas:ro
+    restart: unless-stopped
+
+  chats:
+    build:
+      context: .
+      dockerfile: ./services/chats/Dockerfile
+    container_name: chats_service
+    env_file:
+      - ./services/chats/.env
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "8004:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/chats:/app/chats
+      - ./services/schemas:/app/schemas:ro
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
