@@ -1,10 +1,10 @@
 import asyncio
 from typing import List
 from dotenv import load_dotenv
-from llm_chat.core.domain.chat import Chat
-from llm_chat.core.domain.mytypes import Role
-from llm_chat.core.domain.images import InputImage
-from llm_chat.core.domain.message import Message
+from core.domain.chat import Chat
+from core.domain.mytypes import Role
+from core.domain.images import InputImage
+from core.domain.message import Message
 # Optionally reuse the “friendlier” loop we discussed earlier
 
 load_dotenv()
