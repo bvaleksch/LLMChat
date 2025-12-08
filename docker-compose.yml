@@ -91,5 +91,23 @@ services:
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
 
+  gateway:
+    build:
+      context: .
+      dockerfile: ./services/gateway/Dockerfile
+    container_name: gateway_service
+    env_file:
+      - ./services/gateway/.env
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "8005:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./services/gateway:/app/gateway
+      - ./services/schemas:/app/schemas:ro
+    restart: unless-stopped
+
 volumes:
   postgres_data:
