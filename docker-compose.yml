@@ -1,5 +1,3 @@
-# docker-compose.yml
-
 services:
   postgres:
     image: postgres:16
@@ -19,6 +17,9 @@ services:
       timeout: 5s
       retries: 5
 
+  ##############################################################
+  # NONCE SERVICE — FastAPI
+  ##############################################################
   nonce:
     build:
       context: .
@@ -28,6 +29,7 @@ services:
       - ./services/nonce/.env
     environment:
       PYTHONPATH: /app
+    command: uvicorn nonce.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8001:8000"
     depends_on:
@@ -37,6 +39,9 @@ services:
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
 
+  ##############################################################
+  # MEDIA SERVICE — FastAPI
+  ##############################################################
   media:
     build:
       context: .
@@ -46,15 +51,19 @@ services:
       - ./services/media/.env
     environment:
       PYTHONPATH: /app
+    command: uvicorn media.media:router --host 0.0.0.0 --port 8000
     ports:
       - "8003:8000"
     depends_on:
       - postgres
     volumes:
-      - ./services/media:/app/media
+      - ./services/media:/app/users
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
 
+  ##############################################################
+  # USERS SERVICE — FastAPI
+  ##############################################################
   users:
     build:
       context: .
@@ -64,6 +73,7 @@ services:
       - ./services/users/.env
     environment:
       PYTHONPATH: /app
+    command: uvicorn users.users:router --host 0.0.0.0 --port 8000
     ports:
       - "8002:8000"
     depends_on:
@@ -73,6 +83,9 @@ services:
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
 
+  ##############################################################
+  # CHATS SERVICE — FastAPI
+  ##############################################################
   chats:
     build:
       context: .
@@ -82,6 +95,7 @@ services:
       - ./services/chats/.env
     environment:
       PYTHONPATH: /app
+    command: uvicorn chats.chats:router --host 0.0.0.0 --port 8000
     ports:
       - "8004:8000"
     depends_on:
@@ -91,6 +105,9 @@ services:
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
 
+  ##############################################################
+  # API GATEWAY — FastAPI
+  ##############################################################
   gateway:
     build:
       context: .
@@ -100,14 +117,26 @@ services:
       - ./services/gateway/.env
     environment:
       PYTHONPATH: /app
+
+      NONCE_URL: "http://nonce:8000"
+      USERS_URL: "http://users:8000"
+      MEDIA_URL: "http://media:8000"
+      CHATS_URL: "http://chats:8000"
+
+    command: uvicorn gateway.main:app --host 0.0.0.0 --port 8000 # <-- Эту команду оставляем!
     ports:
       - "8005:8000"
     depends_on:
-      - postgres
+      - nonce
+      - users
+      - media
+      - chats
     volumes:
       - ./services/gateway:/app/gateway
+      - ./services:/app/services:ro
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
+
 
 volumes:
   postgres_data:

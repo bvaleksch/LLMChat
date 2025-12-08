@@ -1,9 +1,32 @@
 from fastapi import FastAPI, Request, UploadFile, HTTPException
 from fastapi.responses import Response
-from services import SERVICES
-from utils import proxy_request
+import httpx
 
 app = FastAPI(title="API Gateway")
+
+SERVICES = {
+    "nonce": "http://nonce:8001",
+    "users": "http://users:8002",
+    "media": "http://media:8003",
+    "chats": "http://chats:8004",
+}
+
+async def proxy_request(method, url, headers, params, body, files):
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        try:
+            resp = await client.request(
+                method=method,
+                url=url,
+                headers=headers,
+                params=params,
+                content=body if not files else None,
+                files=files,
+            )
+        except httpx.RequestError:
+            raise HTTPException(status_code=503, detail="Service unavailable")
+
+    return resp
+
 
 
 def parse_path(full_path: str):
