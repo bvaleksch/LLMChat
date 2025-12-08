@@ -113,8 +113,6 @@ services:
       context: .
       dockerfile: ./services/gateway/Dockerfile
     container_name: gateway_service
-    env_file:
-      - ./services/gateway/.env
     environment:
       PYTHONPATH: /app
 
@@ -140,3 +138,4 @@ services:
 
 volumes:
   postgres_data:
+
