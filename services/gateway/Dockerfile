@@ -7,12 +7,10 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# 1. Устанавливаем общие зависимости
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# 2. Копируем код сервиса
-COPY services/gateway/ /app/gateway/
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
-CMD ["uvicorn", "media.main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY . .
+
+CMD ["uvicorn", "gateway.main:app", "--host", "0.0.0.0", "--port", "8000"]
