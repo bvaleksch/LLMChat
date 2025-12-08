@@ -16,6 +16,7 @@ Image upload and storage service.
 ## Configuration
 
 ```env
+MEDIA_DATABASE_URL=postgresql+asyncpg://media_service:<password>@localhost:5434/media_service_db
 S3_ENDPOINT=https://storage.clo.ru
 S3_BUCKET=llm-chat-images
 S3_ACCESS_KEY=your_key

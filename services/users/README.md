@@ -15,7 +15,7 @@ User authentication and management.
 ## Configuration
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/llm_chat
+USERS_DATABASE_URL=postgresql+asyncpg://users_service:<password>@localhost:5433/users_service_db
 JWT_DEV_SECRET=your_jwt_secret
 ```
 

@@ -1,15 +1,60 @@
 services:
-  postgres:
+  ##############################################################
+  # USERS DATABASE — PostgreSQL
+  ##############################################################
+  postgres_users:
     image: postgres:16
-    container_name: postgres_db
+    container_name: postgres_users
     environment:
-      POSTGRES_USER: llm_chat_user
-      POSTGRES_PASSWORD: DAVBPMhTIHfEL76q6rpRNk2a4Mzo2Vg1t0oNTeX0xKY
-      POSTGRES_DB: llm_chat_db
+      POSTGRES_USER: ${USERS_DB_USER}
+      POSTGRES_PASSWORD: ${USERS_DB_PASSWORD}
+      POSTGRES_DB: ${USERS_DB_NAME}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_users_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ##############################################################
+  # MEDIA DATABASE — PostgreSQL
+  ##############################################################
+  postgres_media:
+    image: postgres:16
+    container_name: postgres_media
+    environment:
+      POSTGRES_USER: ${MEDIA_DB_USER}
+      POSTGRES_PASSWORD: ${MEDIA_DB_PASSWORD}
+      POSTGRES_DB: ${MEDIA_DB_NAME}
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - postgres_media_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ##############################################################
+  # CHATS DATABASE — PostgreSQL
+  ##############################################################
+  postgres_chats:
+    image: postgres:16
+    container_name: postgres_chats
+    environment:
+      POSTGRES_USER: ${CHATS_DB_USER}
+      POSTGRES_PASSWORD: ${CHATS_DB_PASSWORD}
+      POSTGRES_DB: ${CHATS_DB_NAME}
+    ports:
+      - "127.0.0.1:5435:5432"
+    volumes:
+      - postgres_chats_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
@@ -32,8 +77,6 @@ services:
     command: uvicorn nonce.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8001:8000"
-    depends_on:
-      - postgres
     volumes:
       - ./services/nonce:/app/nonce
       - ./services/schemas:/app/schemas:ro
@@ -51,11 +94,13 @@ services:
       - ./services/media/.env
     environment:
       PYTHONPATH: /app
+      MEDIA_DATABASE_URL: ${MEDIA_DATABASE_URL}
+      DATABASE_URL: ${MEDIA_DATABASE_URL}
     command: uvicorn media.media:router --host 0.0.0.0 --port 8000
     ports:
       - "8003:8000"
     depends_on:
-      - postgres
+      - postgres_media
     volumes:
       - ./services/media:/app/users
       - ./services/schemas:/app/schemas:ro
@@ -73,11 +118,13 @@ services:
       - ./services/users/.env
     environment:
       PYTHONPATH: /app
+      USERS_DATABASE_URL: ${USERS_DATABASE_URL}
+      DATABASE_URL: ${USERS_DATABASE_URL}
     command: uvicorn users.users:router --host 0.0.0.0 --port 8000
     ports:
       - "8002:8000"
     depends_on:
-      - postgres
+      - postgres_users
     volumes:
       - ./services/users:/app/users
       - ./services/schemas:/app/schemas:ro
@@ -95,11 +142,13 @@ services:
       - ./services/chats/.env
     environment:
       PYTHONPATH: /app
+      CHATS_DATABASE_URL: ${CHATS_DATABASE_URL}
+      DATABASE_URL: ${CHATS_DATABASE_URL}
     command: uvicorn chats.chats:router --host 0.0.0.0 --port 8000
     ports:
       - "8004:8000"
     depends_on:
-      - postgres
+      - postgres_chats
     volumes:
       - ./services/chats:/app/chats
       - ./services/schemas:/app/schemas:ro
@@ -137,5 +186,7 @@ services:
 
 
 volumes:
-  postgres_data:
+  postgres_users_data:
+  postgres_media_data:
+  postgres_chats_data:
 

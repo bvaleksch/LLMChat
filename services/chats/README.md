@@ -17,7 +17,7 @@ Chat and message management.
 ## Configuration
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/llm_chat
+CHATS_DATABASE_URL=postgresql+asyncpg://chats_service:<password>@localhost:5435/chats_service_db
 ```
 
 ## Start
