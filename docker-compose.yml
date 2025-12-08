@@ -139,6 +139,7 @@ services:
       dockerfile: ./services/chats/Dockerfile
     container_name: chats_service
     env_file:
+      - ./.env
       - ./services/chats/.env
     environment:
       PYTHONPATH: /app
