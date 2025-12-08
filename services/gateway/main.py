@@ -1,14 +1,15 @@
+import httpx
+import os
 from fastapi import FastAPI, Request, UploadFile, HTTPException
 from fastapi.responses import Response
-import httpx
 
 app = FastAPI(title="API Gateway")
 
 SERVICES = {
-    "nonce": "http://nonce:8001",
-    "users": "http://users:8002",
-    "media": "http://media:8003",
-    "chats": "http://chats:8004",
+    "nonce": os.getenv("NONCE_URL", "http://nonce:8000"),
+    "users": os.getenv("USERS_URL", "http://users:8000"),
+    "media": os.getenv("MEDIA_URL", "http://media:8000"),
+    "chats": os.getenv("CHATS_URL", "http://chats:8000"),
 }
 
 async def proxy_request(method, url, headers, params, body, files):
@@ -31,17 +32,14 @@ async def proxy_request(method, url, headers, params, body, files):
 
 def parse_path(full_path: str):
     """
-    /v1/users/login → service='users', subpath='/login'
+    Extract service and subpath.
+    Example: 'nonce/confirm' -> service='nonce', subpath='/confirm'
     """
     parts = full_path.strip("/").split("/")
-
-    if len(parts) < 2:
+    if not parts or not parts[0]:
         return None, None
-
-    version = parts[0]
-    service = parts[1]
-    rest = "/" + "/".join(parts[2:]) if len(parts) > 2 else ""
-
+    service = parts[0]
+    rest = "/" + "/".join(parts[1:]) if len(parts) > 1 else ""
     return service, rest
 
 
@@ -53,7 +51,8 @@ async def gateway(request: Request, full_path: str):
     if service not in SERVICES:
         raise HTTPException(status_code=404, detail="Unknown service")
 
-    target_url = SERVICES[service] + subpath
+    target_path = f"/v1/{service}{subpath}"
+    target_url = SERVICES[service] + target_path
 
     # Headers except host
     headers = {k: v for k, v in request.headers.items() if k.lower() != "host"}
