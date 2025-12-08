@@ -49,6 +49,7 @@ async def create_chat(
 
 
 @router.get("/", response_model=List[ChatOut])
+@router.get("", response_model=List[ChatOut])  # handle /v1/chats without trailing slash
 async def list_my_chats(
     db: AsyncSession = Depends(get_db),
     current_user: UserOut = Depends(get_current_user),
@@ -140,5 +141,4 @@ async def list_chat_members(
     res = await db.execute(select(ChatMember).where(ChatMember.chat_id == chat_id))
     members = res.scalars().all()
     return [ChatMemberOut.from_orm(m) for m in members]
-
 
