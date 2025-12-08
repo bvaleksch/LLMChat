@@ -96,7 +96,7 @@ services:
       PYTHONPATH: /app
       MEDIA_DATABASE_URL: ${MEDIA_DATABASE_URL}
       DATABASE_URL: ${MEDIA_DATABASE_URL}
-    command: uvicorn media.media:router --host 0.0.0.0 --port 8000
+    command: uvicorn media.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8003:8000"
     depends_on:
@@ -120,7 +120,7 @@ services:
       PYTHONPATH: /app
       USERS_DATABASE_URL: ${USERS_DATABASE_URL}
       DATABASE_URL: ${USERS_DATABASE_URL}
-    command: uvicorn users.users:router --host 0.0.0.0 --port 8000
+    command: uvicorn users.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8002:8000"
     depends_on:
@@ -144,7 +144,7 @@ services:
       PYTHONPATH: /app
       CHATS_DATABASE_URL: ${CHATS_DATABASE_URL}
       DATABASE_URL: ${CHATS_DATABASE_URL}
-    command: uvicorn chats.chats:router --host 0.0.0.0 --port 8000
+    command: uvicorn chats.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8004:8000"
     depends_on:
