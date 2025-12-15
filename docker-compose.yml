@@ -85,26 +85,28 @@ services:
   ##############################################################
   # MEDIA SERVICE — FastAPI
   ##############################################################
-  media:
+  media_1: &media_template
     build:
       context: .
       dockerfile: ./services/media/Dockerfile
-    container_name: media_service
     env_file:
       - ./services/media/.env
     environment:
       PYTHONPATH: /app
-      MEDIA_DATABASE_URL: ${MEDIA_DATABASE_URL}
       DATABASE_URL: ${MEDIA_DATABASE_URL}
     command: uvicorn media.main:app --host 0.0.0.0 --port 8000
-    ports:
-      - "8003:8000"
     depends_on:
       - postgres_media
     volumes:
-      - ./services/media:/app/users
+      - ./services/media:/app/media
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
+
+  media_2:
+    <<: *media_template
+
+  media_3:
+    <<: *media_template
 
   ##############################################################
   # USERS SERVICE — FastAPI
@@ -166,6 +168,7 @@ services:
     container_name: gateway_service
     environment:
       PYTHONPATH: /app
+      MEDIA_BACKENDS: "http://media_1:8000,http://media_2:8000,http://media_3:8000"
 
       NONCE_URL: "http://nonce:8000"
       USERS_URL: "http://users:8000"
@@ -178,7 +181,9 @@ services:
     depends_on:
       - nonce
       - users
-      - media
+      - media_1
+      - media_2
+      - media_3
       - chats
     volumes:
       - ./services/gateway:/app/gateway
