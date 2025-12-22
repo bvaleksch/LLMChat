@@ -35,6 +35,23 @@ S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 PRESIGN_EXPIRES = int(os.getenv("S3_PRESIGN_TTL", "900"))  # seconds
 
 
+@lru_cache(maxsize=1)
+def get_replica_id() -> str:
+    explicit = os.getenv("REPLICA_ID")
+    if explicit:
+        return explicit
+
+    hostname = os.getenv("HOSTNAME")
+    if hostname:
+        return hostname
+
+    return f"generated-{uuid.uuid4()}"
+
+@router.get("/system-id")
+async def system_id() -> dict:
+    return {"replica_id": get_replica_id()}
+
+
 def _s3_client():
     """Create aioboto3 S3 client (bucket must already exist)."""
     return aioboto3.Session().client(
@@ -176,21 +193,4 @@ async def get_presigned_url(
         except s3.exceptions.NoSuchBucket:
             raise HTTPException(status_code=500, detail=f"Bucket '{S3_BUCKET}' not found.")
     return {"media_id": str(img.id), "url": url}
-
-
-@lru_cache(maxsize=1)
-def get_replica_id() -> str:
-    explicit = os.getenv("REPLICA_ID")
-    if explicit:
-        return explicit
-
-    hostname = os.getenv("HOSTNAME")
-    if hostname:
-        return hostname
-
-    return f"generated-{uuid.uuid4()}"
-
-@router.get("/system-id")
-async def system_id() -> dict:
-    return {"replica_id": get_replica_id()}
 
