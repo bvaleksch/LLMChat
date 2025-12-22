@@ -4,6 +4,7 @@ import uuid
 import hashlib
 from io import BytesIO
 from typing import Optional
+from functools import lru_cache
 
 import aioboto3
 from PIL import Image
@@ -175,4 +176,21 @@ async def get_presigned_url(
         except s3.exceptions.NoSuchBucket:
             raise HTTPException(status_code=500, detail=f"Bucket '{S3_BUCKET}' not found.")
     return {"media_id": str(img.id), "url": url}
+
+
+@lru_cache(maxsize=1)
+def get_replica_id() -> str:
+    explicit = os.getenv("REPLICA_ID")
+    if explicit:
+        return explicit
+
+    hostname = os.getenv("HOSTNAME")
+    if hostname:
+        return hostname
+
+    return f"generated-{uuid.uuid4()}"
+
+@router.get("/system-id")
+async def system_id() -> dict:
+    return {"replica_id": get_replica_id()}
 

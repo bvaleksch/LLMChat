@@ -85,6 +85,10 @@ services:
   ##############################################################
   # MEDIA SERVICE — FastAPI
   ##############################################################
+  x-media-env: &media_env
+    PYTHONPATH: /app
+    DATABASE_URL: ${MEDIA_DATABASE_URL}
+
   media_1: &media_template
     build:
       context: .
@@ -92,8 +96,8 @@ services:
     env_file:
       - ./services/media/.env
     environment:
-      PYTHONPATH: /app
-      DATABASE_URL: ${MEDIA_DATABASE_URL}
+      <<: *media_env
+      REPLICA_ID: "media-1"
     command: uvicorn media.main:app --host 0.0.0.0 --port 8000
     depends_on:
       - postgres_media
@@ -104,9 +108,15 @@ services:
 
   media_2:
     <<: *media_template
+    environment:
+      <<: *media_env
+      REPLICA_ID: "media-2"
 
   media_3:
     <<: *media_template
+    environment:
+      <<: *media_env
+      REPLICA_ID: "media-3"
 
   ##############################################################
   # USERS SERVICE — FastAPI
