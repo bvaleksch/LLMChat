@@ -1,3 +1,7 @@
+x-media-env: &media_env
+    PYTHONPATH: /app
+    DATABASE_URL: ${MEDIA_DATABASE_URL}
+
 services:
   ##############################################################
   # USERS DATABASE — PostgreSQL
@@ -85,10 +89,6 @@ services:
   ##############################################################
   # MEDIA SERVICE — FastAPI
   ##############################################################
-  x-media-env: &media_env
-    PYTHONPATH: /app
-    DATABASE_URL: ${MEDIA_DATABASE_URL}
-
   media_1: &media_template
     build:
       context: .
