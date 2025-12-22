@@ -191,9 +191,29 @@ services:
       - ./services/schemas:/app/schemas:ro
     restart: unless-stopped
 
+  ##############################################################
+  # PGADMIN — Database Management Interface
+  ##############################################################
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}      # <--- Changed
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD} # <--- Changed
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    depends_on:
+      - postgres_users
+      - postgres_media
+      - postgres_chats
+
 
 volumes:
   postgres_users_data:
   postgres_media_data:
   postgres_chats_data:
+  pgadmin_data:
 
